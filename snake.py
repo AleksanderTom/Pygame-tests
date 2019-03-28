@@ -32,6 +32,40 @@ mediumfont = pygame.font.SysFont("comicsansms", 50)
 largefont = pygame.font.SysFont("comicsansms", 80)
 
 
+def pause():
+    paused = True
+
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_c:
+                    paused = False
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+
+        gameDisplay.fill(white)
+        message_to_screen("Game Paused", black, -100, size='large')
+        message_to_screen("Press C to continue or Q to quit.", black, 25)
+        pygame.display.update()
+        clock.tick(4)
+
+
+def score(score):
+    text = smallfont.render("Score: " + str(score), True, black)
+    gameDisplay.blit(text, [0, 0])
+
+
+def rand_apple_generator():
+    randAppleX = round(random.randrange(0, display_width - AppleThickness))
+    randAppleY = round(random.randrange(0, display_height - AppleThickness))
+
+    return randAppleX, randAppleY
+
+
 def game_intro():
 
     intro = True
@@ -58,6 +92,7 @@ def game_intro():
 
         pygame.display.update()
         clock.tick(4)
+
 
 def snake(block_size, snakeList):
 
@@ -109,8 +144,7 @@ def gameLoop():
     snakeList = []
     snakeLength = 1
 
-    randAppleX = round(random.randrange(0, display_width - AppleThickness))# / 10.0) * 10.0
-    randAppleY = round(random.randrange(0, display_height - AppleThickness))# / 10.0) * 10.0
+    randAppleX, randAppleY = rand_apple_generator()
 
     while not gameExit:
 
@@ -152,6 +186,8 @@ def gameLoop():
                     lead_x_change = 0
                     lead_y_change = block_size
                     direction = 'down'
+                elif event.key == pygame.K_p:
+                    pause()
 
         if lead_x >= display_width or lead_x <= 0 or lead_y <= 0 or lead_y >= display_height:
             gameOver = True
@@ -175,22 +211,24 @@ def gameLoop():
                 gameOver = True
 
         snake(block_size, snakeList)
+
+        score(snakeLength - 1)
+
         pygame.display.update()
 
         if lead_x > randAppleX and lead_x < randAppleX + AppleThickness or lead_x + block_size > randAppleX and lead_x + block_size < randAppleX + AppleThickness:
             if lead_y > randAppleY and lead_y < randAppleY + AppleThickness:
-                randAppleX = round(random.randrange(0, display_width - AppleThickness))  # / 10.0) * 10.0
-                randAppleY = round(random.randrange(0, display_height - AppleThickness))  # / 10.0) * 10.0
+                randAppleX, randAppleY = rand_apple_generator()
                 snakeLength += 1
             elif  lead_y + block_size > randAppleY and lead_y + block_size < randAppleY + AppleThickness:
-                randAppleX = round(random.randrange(0, display_width - AppleThickness))  # / 10.0) * 10.0
-                randAppleY = round(random.randrange(0, display_height - AppleThickness))  # / 10.0) * 10.0
+                randAppleX, randAppleY = rand_apple_generator()
                 snakeLength += 1
 
         clock.tick(FPS)
 
     pygame.quit()
     quit()
+
 
 game_intro()
 gameLoop()
