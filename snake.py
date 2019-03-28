@@ -88,7 +88,7 @@ def game_intro():
         message_to_screen("Eat red apples and don't bite yourself!", black, -30)
         message_to_screen("The more apples you eat, the longer you get", black, 10)
         message_to_screen("If you run into yourself or edges, you die", black, 50)
-        message_to_screen("Press C to play or Q to quit.", black, 180, "medium")
+        message_to_screen("Press C to play, P to pause or Q to quit.", black, 180, "medium")
 
         pygame.display.update()
         clock.tick(4)
