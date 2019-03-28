@@ -13,31 +13,57 @@ display_height = 600
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('Snake')
 
+img = pygame.image.load("/home/aleksander/workspace/Game/Pygame-tests/sprites/snakehead.bmp")
+
 clock = pygame.time.Clock()
 
 block_size = 20
-FPS = 30
+FPS = 15
+
+direction = "right"
 
 font = pygame.font.SysFont(None, 25)
 
 
 def snake(block_size, snakeList):
-    for XnY in snakeList:
+
+    if direction == "right":
+        head = pygame.transform.rotate(img, 90)
+
+    if direction == "left":
+        head = pygame.transform.rotate(img, 270)
+
+    if direction == "up":
+        head = pygame.transform.rotate(img, 180)
+
+    if direction == "down":
+        head = pygame.transform.rotate(img, 0)
+
+    gameDisplay.blit(head, (snakeList[-1][0], snakeList[-1][1]))
+    for XnY in snakeList[:-1]:
         pygame.draw.rect(gameDisplay, green, [XnY[0], XnY[1], block_size, block_size])
 
 
+def text_objects(text, color):
+    textSurface = font.render(text, True, color)
+    return textSurface, textSurface.get_rect()
+
+
 def message_to_screen(msg, color):
-    screen_text = font.render(msg, True, color)
-    gameDisplay.blit(screen_text, [display_width / 2, display_height / 2])
+    textSurf, textRect = text_objects(msg, color)
+    textRect.center = (display_width / 2), (display_height / 2)
+    gameDisplay.blit(textSurf, textRect)
 
 
 def gameLoop():
+    global direction
+
     gameExit = False
     gameOver = False
 
     lead_x = display_width / 2
     lead_y = display_height / 2
-    lead_x_change = 0
+    lead_x_change = 10
     lead_y_change = 0
 
     snakeList = []
@@ -71,15 +97,19 @@ def gameLoop():
                 if event.key == pygame.K_LEFT:
                     lead_x_change = -block_size
                     lead_y_change = 0
+                    direction = 'left'
                 elif event.key == pygame.K_RIGHT:
                     lead_x_change = block_size
                     lead_y_change = 0
+                    direction = 'right'
                 elif event.key == pygame.K_UP:
                     lead_x_change = 0
                     lead_y_change = -block_size
+                    direction = 'up'
                 elif event.key == pygame.K_DOWN:
                     lead_x_change = 0
                     lead_y_change = block_size
+                    direction = 'down'
 
         if lead_x >= display_width or lead_x <= 0 or lead_y <= 0 or lead_y >= display_height:
             gameOver = True
@@ -106,10 +136,14 @@ def gameLoop():
         snake(block_size, snakeList)
         pygame.display.update()
 
-        if lead_x >= randAppleX and lead_x <= randAppleX + AppleThickness:
-            if lead_y >= randAppleY and lead_y <= randAppleY + AppleThickness:
-                randAppleX = round(random.randrange(0, display_width - block_size))# / 10.0) * 10.0
-                randAppleY = round(random.randrange(0, display_height - block_size))# / 10.0) * 10.0
+        if lead_x > randAppleX and lead_x < randAppleX + AppleThickness or lead_x + block_size > randAppleX and lead_x + block_size < randAppleX + AppleThickness:
+            if lead_y > randAppleY and lead_y < randAppleY + AppleThickness:
+                randAppleX = round(random.randrange(0, display_width - block_size))  # / 10.0) * 10.0
+                randAppleY = round(random.randrange(0, display_height - block_size))  # / 10.0) * 10.0
+                snakeLength += 1
+            elif  lead_y + block_size > randAppleY and lead_y + block_size < randAppleY + AppleThickness:
+                randAppleX = round(random.randrange(0, display_width - block_size))  # / 10.0) * 10.0
+                randAppleY = round(random.randrange(0, display_height - block_size))  # / 10.0) * 10.0
                 snakeLength += 1
 
         clock.tick(FPS)
