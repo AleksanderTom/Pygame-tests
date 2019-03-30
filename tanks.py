@@ -23,7 +23,12 @@ display_height = 600
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 
 mainTankX = display_width * 0.9
-mainTankY = display_height * 0.7
+mainTankY = display_height * 0.9
+tankWidth = 40
+tankHeight = 20
+turretWidth = 5
+wheelWidth = 5
+
 
 # icon = pygame.image.load("/home/aleksander/workspace/Game/Pygame-tests/sprites/apple.bmp")
 # pygame.display.set_icon(icon)
@@ -82,7 +87,16 @@ def text_to_button(msg, color, buttonX, buttonY, button_width, button_height, si
 
 
 def tank(x, y):
-    pygame.draw.circle(gameDisplay, black, (int(x), int(y)), 20)
+    x = int(x)
+    y = int(y)
+    pygame.draw.circle(gameDisplay, black, (x, y), int(tankHeight / 2))
+    pygame.draw.rect(gameDisplay, black, (x - tankHeight, y, tankWidth, tankHeight))
+    pygame.draw.line(gameDisplay, black, (x, y), (x - 10, y - 20), turretWidth)
+
+    wheel_displacement = 15
+    for i in range(0, 7):
+        pygame.draw.circle(gameDisplay, black, (x - wheel_displacement, y + 20), wheelWidth)
+        wheel_displacement -= 5
 
 
 def game_intro():
